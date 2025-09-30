@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Filter, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -109,7 +110,7 @@ const Home = () => {
             </p>
 
             {/* Search Bar */}
-            <div className="relative mx-auto max-w-2xl">
+            <div className="relative mx-auto max-w-2xl mb-4">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
@@ -119,6 +120,10 @@ const Home = () => {
                 className="h-14 pl-12 pr-4 text-lg"
               />
             </div>
+
+            <p className="text-sm text-muted-foreground">
+              👉 <Link to="/login" className="text-primary hover:underline font-medium">Try demo login</Link> to explore all features
+            </p>
           </motion.div>
         </div>
       </section>

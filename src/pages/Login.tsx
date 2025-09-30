@@ -35,6 +35,22 @@ const Login = () => {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    setEmail('demo@skillnet.com');
+    setPassword('demo123');
+    
+    try {
+      await login('demo@skillnet.com', 'demo123');
+      toast.success('Logged in as Demo User!');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error('Demo login failed.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
       {/* Left Side - Form */}
@@ -97,6 +113,26 @@ const Login = () => {
               ) : (
                 'Sign In'
               )}
+            </Button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">Or</span>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={handleDemoLogin}
+              disabled={isLoading}
+            >
+              🚀 Try Demo Login
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
