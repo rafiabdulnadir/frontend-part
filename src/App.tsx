@@ -13,6 +13,12 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
+import EditProfile from './pages/EditProfile';
+import AboutUs from "./pages/AboutUs";
+import UserProfileDemo from "./pages/UserProfileDemo";
+import ProjectsPage from "./pages/ProjectsPage";
+import FeedbackPage from "./pages/FeedbackPage";
+
 
 const queryClient = new QueryClient();
 
@@ -27,12 +33,27 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
+                    <Route path="/projectspage" element={
+                      <ProtectedRoute>
+                       <ProjectsPage /> 
+                    </ProtectedRoute>} />
+           <Route path="/user-profile-demo/:skillId" element={<UserProfileDemo />} />
+
+      
               <Route path="/register" element={<Register />} />
               <Route
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+                 <Route
+                path="/feedback"
+                element={
+                  <ProtectedRoute>
+                    <FeedbackPage />
                   </ProtectedRoute>
                 }
               />
@@ -43,7 +64,16 @@ const App = () => (
                     <Profile />
                   </ProtectedRoute>
                 }
-              />
+              /> <Route path="/about" element={<AboutUs />} />
+              <Route
+  path="/edit-profile"
+  element={
+    <ProtectedRoute>
+      <EditProfile />
+    </ProtectedRoute>
+  }
+/>
+
               <Route
                 path="/messages"
                 element={

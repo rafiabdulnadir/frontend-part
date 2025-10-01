@@ -27,7 +27,7 @@ const Login = () => {
     try {
       await login(email, password);
       toast.success('Welcome back!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       toast.error('Login failed. Please check your credentials.');
     } finally {
@@ -43,7 +43,7 @@ const Login = () => {
     try {
       await login('demo@skillnet.com', 'demo123');
       toast.success('Logged in as Demo User!');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       toast.error('Demo login failed.');
     } finally {

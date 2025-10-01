@@ -4,8 +4,12 @@ import { Navbar } from '@/components/Navbar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MapPin, Mail, Phone, Edit } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   return (
@@ -37,10 +41,13 @@ const Profile = () => {
                       </div>
                     )}
                   </div>
-                  <Button variant="default">
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Profile
-                  </Button>
+                  <Button
+  variant="default"
+  onClick={() => navigate('/edit-profile')}
+>
+  <Edit className="mr-2 h-4 w-4" />
+  Edit Profile
+</Button>
                 </div>
 
                 {/* Rating */}

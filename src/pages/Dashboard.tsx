@@ -4,6 +4,9 @@ import { Navbar } from '@/components/Navbar';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageSquare, TrendingUp, Users } from 'lucide-react';
+import {
+  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend
+} from 'recharts';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -20,6 +23,26 @@ const Dashboard = () => {
     { type: 'rating', text: 'Mike Chen rated your service 5 stars', time: '2 hours ago' },
     { type: 'view', text: 'Your profile was viewed 15 times today', time: '5 hours ago' },
   ];
+
+  // Dummy data for charts
+  const viewsData = [
+    { day: 'Mon', views: 20 },
+    { day: 'Tue', views: 35 },
+    { day: 'Wed', views: 50 },
+    { day: 'Thu', views: 30 },
+    { day: 'Fri', views: 60 },
+    { day: 'Sat', views: 90 },
+    { day: 'Sun', views: 70 },
+  ];
+
+  const skillData = [
+    { name: 'Frontend', value: 40 },
+    { name: 'Backend', value: 25 },
+    { name: 'Data Science', value: 20 },
+    { name: 'Other', value: 15 },
+  ];
+
+  const COLORS = ['#0d6efd', '#1a1a1a', '#17a2b8', '#ffc107'];
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,9 +110,23 @@ const Dashboard = () => {
                 ))}
               </div>
             </Card>
+
+            {/* Line Chart: Profile Views Trend */}
+            <Card className="mt-6 p-6">
+              <h2 className="mb-4 text-2xl font-bold">Profile Views (Weekly)</h2>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={viewsData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                  <XAxis dataKey="day" stroke="#aaa" />
+                  <YAxis stroke="#aaa" />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="views" stroke="#0d6efd" strokeWidth={2} dot />
+                </LineChart>
+              </ResponsiveContainer>
+            </Card>
           </motion.div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions & Pie Chart */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -119,6 +156,29 @@ const Dashboard = () => {
                 <div className="h-full w-3/4 bg-gradient-primary" />
               </div>
               <p className="text-sm text-muted-foreground">75% Complete</p>
+            </Card>
+
+            {/* Pie Chart: Skill Categories */}
+            <Card className="mt-6 p-6">
+              <h3 className="mb-4 font-bold">Skill Categories</h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={skillData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    outerRadius={80}
+                    dataKey="value"
+                  >
+                    {skillData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
             </Card>
           </motion.div>
         </div>

@@ -1,12 +1,18 @@
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Bell, MessageSquare, User, LogOut, Search, Menu, X } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Bell, MessageSquare, User, LogOut, Search, Menu, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
-export const Navbar = () => {
-  const { isAuthenticated, logout, user } = useAuth();
+interface NavbarProps {
+  activeSection?: string;
+  heroRef?: React.RefObject<HTMLDivElement>;
+  exploreRef?: React.RefObject<HTMLDivElement>;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ activeSection, heroRef, exploreRef }) => {
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,19 +20,37 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
-
-  const isActive = (path: string) => location.pathname === path;
 
   const navLinks = isAuthenticated
     ? [
-        { path: '/', label: 'Browse Skills' },
-        { path: '/dashboard', label: 'Dashboard' },
-        { path: '/messages', label: 'Messages' },
-        { path: '/profile', label: 'Profile' },
+        { path: "/", label: "Home", section: "home" },
+        { path: "/", label: "Explore", section: "explore" },
+        { path: "/dashboard", label: "Dashboard" },
+       
+        { path: "/profile", label: "Profile" },
       ]
-    : [];
+    : [
+        { path: "/", label: "Home", section: "home" },
+        { path: "/", label: "Explore", section: "explore" },
+      ];
+
+  const isActive = (link: any) => {
+    if (activeSection && link.section) return activeSection === link.section;
+    return location.pathname === link.path;
+  };
+
+  const handleNavClick = (link: any) => {
+    if (link.section === "home" && heroRef?.current) {
+      heroRef.current.scrollIntoView({ behavior: "smooth" });
+    } else if (link.section === "explore" && exploreRef?.current) {
+      exploreRef.current.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(link.path);
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <motion.nav
@@ -38,10 +62,7 @@ export const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2"
-            >
+            <motion.div whileHover={{ scale: 1.05 }} className="flex items-center space-x-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-primary">
                 <Search className="h-6 w-6" />
               </div>
@@ -49,30 +70,24 @@ export const Navbar = () => {
             </motion.div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Nav */}
           <div className="hidden items-center space-x-1 md:flex">
             {navLinks.map((link) => (
-              <Link key={link.path} to={link.path}>
-                <Button
-                  variant={isActive(link.path) ? 'default' : 'ghost'}
-                  className={isActive(link.path) ? 'pointer-events-none' : ''}
-                >
-                  {link.label}
-                </Button>
-              </Link>
+              <Button
+                key={link.label}
+                variant={isActive(link) ? "default" : "ghost"}
+                onClick={() => handleNavClick(link)}
+              >
+                {link.label}
+              </Button>
             ))}
           </div>
 
-          {/* Right Side Actions */}
+          {/* Right Actions */}
           <div className="flex items-center space-x-2">
             {isAuthenticated ? (
               <>
-                {/* Notifications */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="relative rounded-lg p-2 hover:bg-secondary-hover"
-                >
+                <motion.button className="relative rounded-lg p-2 hover:bg-secondary-hover">
                   <Bell className="h-5 w-5" />
                   {notificationCount > 0 && (
                     <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs">
@@ -81,34 +96,22 @@ export const Navbar = () => {
                   )}
                 </motion.button>
 
-                {/* Messages */}
                 <Link to="/messages">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="rounded-lg p-2 hover:bg-secondary-hover"
-                  >
+                  <motion.button className="rounded-lg p-2 hover:bg-secondary-hover">
                     <MessageSquare className="h-5 w-5" />
                   </motion.button>
                 </Link>
 
-                {/* Profile */}
                 <Link to="/profile">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="rounded-lg p-2 hover:bg-secondary-hover"
-                  >
+                  <motion.button className="rounded-lg p-2 hover:bg-secondary-hover">
                     <User className="h-5 w-5" />
                   </motion.button>
                 </Link>
 
-                {/* Logout */}
                 <Button variant="ghost" size="icon" onClick={handleLogout}>
                   <LogOut className="h-5 w-5" />
                 </Button>
 
-                {/* Mobile Menu Toggle */}
                 <button
                   className="md:hidden rounded-lg p-2 hover:bg-secondary-hover"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -130,23 +133,18 @@ export const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && isAuthenticated && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border-t border-border py-4 md:hidden"
-          >
+        {mobileMenuOpen && (
+          <motion.div className="border-t border-border py-4 md:hidden">
             <div className="flex flex-col space-y-2">
               {navLinks.map((link) => (
-                <Link key={link.path} to={link.path} onClick={() => setMobileMenuOpen(false)}>
-                  <Button
-                    variant={isActive(link.path) ? 'default' : 'ghost'}
-                    className="w-full justify-start"
-                  >
-                    {link.label}
-                  </Button>
-                </Link>
+                <Button
+                  key={link.label}
+                  variant={isActive(link) ? "default" : "ghost"}
+                  className="w-full justify-start"
+                  onClick={() => handleNavClick(link)}
+                >
+                  {link.label}
+                </Button>
               ))}
             </div>
           </motion.div>
@@ -155,3 +153,5 @@ export const Navbar = () => {
     </motion.nav>
   );
 };
+
+export default Navbar;
